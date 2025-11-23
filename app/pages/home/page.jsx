@@ -26,7 +26,7 @@ function Home() {
         if (res.data && res.data.data) setData(res.data.data);
         console.log(res.data);
       } catch (err) {
-        console.error('Error fetching passwords:', err.response?.data || err.message);
+        console.log('Error fetching passwords:', err.response?.data || err.message);
       }
     };
     fetchPasswords();
