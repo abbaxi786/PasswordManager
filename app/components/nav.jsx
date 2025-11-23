@@ -3,14 +3,32 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GoKey } from "react-icons/go";
 import { TfiMenuAlt } from "react-icons/tfi";
+import { useRouter } from "next/navigation";
 
 function Nav() {
   const [theme, setTheme] = useState("light");
+  const router = useRouter();
 
   // Apply theme to <html> tag
   useEffect(() => {
     document.querySelector("html").setAttribute("data-theme", theme);
   }, [theme]);
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/user/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        router.push("/pages/signInUp"); // redirect to login page
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <nav className="flex items-center justify-between p-4 bg-base-200 shadow">
@@ -44,6 +62,11 @@ function Nav() {
           <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow absolute right-0 mt-2">
             <li>
               <Link href="/pages/signInUp">Log / Sign In</Link>
+            </li>
+            <li>
+              <button className="w-full text-left" onClick={handleLogout}>
+                Logout
+              </button>
             </li>
           </ul>
         </details>
