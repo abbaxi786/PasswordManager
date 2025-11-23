@@ -2,13 +2,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-
 function SignIn({func}) {
-
   const [error, setError] = useState('');
   const [message, setMessage] = useState(false);
-  const [color,setColor]= useState('p-6 badge badge-error')
-
+  const [color, setColor] = useState('p-6 badge badge-error');
 
   const [form, setForm] = useState({
     username: "",
@@ -18,16 +15,16 @@ function SignIn({func}) {
     type: "register"
   });
 
-  function ErrorShow(msg,logIn=false) {
+  function ErrorShow(msg, logIn = false) {
     setError(msg);
     setMessage(true);
-    setTimeout(() => {setMessage(false)
-      if(logIn){
+    setTimeout(() => {
+      setMessage(false);
+      if (logIn) {
         func('logIn');
       }
       setColor('p-6 badge badge-error');
     }, 2000);
-    
   }
 
   async function handleSubmit(e) {
@@ -40,21 +37,33 @@ function SignIn({func}) {
         return;
       }
 
+      console.log("📤 Sending registration request...");
+
+      // Remove confirmPassword before sending
+      const { confirmPassword, ...dataToSend } = form;
+
       // 🟢 Correct axios POST request
-      const response = await axios.post('/api/user', form);
+      const response = await axios.post('/api/user', dataToSend); // ✅ Fixed: relative URL
 
       console.log("SignIn Response: ", response.data);
 
       if (response.data.success) {
-        setColor('p-6 badge badge-success')
-        ErrorShow(response.data.message,true);
+        setColor('p-6 badge badge-success');
+        ErrorShow(response.data.message, true);
       } else {
-        ErrorShow("Registration failed.");
+        ErrorShow(response.data.message || "Registration failed.");
       }
 
     } catch (err) {
-      ErrorShow("Server error: " + err.message);
-      console.log(err);
+      console.error("🔥 Registration error:", err);
+      
+      if (err.response) {
+        ErrorShow(err.response.data?.message || "Server error: " + err.message);
+      } else if (err.request) {
+        ErrorShow("Cannot connect to server");
+      } else {
+        ErrorShow("Server error: " + err.message);
+      }
     }
   }
 

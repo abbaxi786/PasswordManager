@@ -3,9 +3,6 @@ import { useState } from 'react';
 import axios from 'axios';
 
 function LogIn() {
-
-  // console.log("The response user: "+localStorage.getItem("user"));
-
   const [error, setError] = useState('');
   const [message, setMessage] = useState(false);
   const [color, setColor] = useState('p-6 badge badge-error');
@@ -28,11 +25,13 @@ function LogIn() {
     e.preventDefault();
 
     try {
+      console.log("📤 Sending login request...");
+
       const response = await axios.post(
-        'http://localhost:3000/api/user',
+        '/api/user', // ✅ Fixed: relative URL
         form,
         {
-          withCredentials: true,   // 👈 REQUIRED so browser accepts JWT cookie
+          withCredentials: true,
         }
       );
 
@@ -57,7 +56,16 @@ function LogIn() {
       }
 
     } catch (error) {
-      ErrorShow("Server error: " + error.message);
+      console.error("🔥 Login error:", error);
+      setColor("p-6 badge badge-error");
+      
+      if (error.response) {
+        ErrorShow(error.response.data?.message || "Server error: " + error.message);
+      } else if (error.request) {
+        ErrorShow("Cannot connect to server");
+      } else {
+        ErrorShow("Server error: " + error.message);
+      }
     }
   }
 
