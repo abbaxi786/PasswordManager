@@ -14,7 +14,7 @@ export async function POST(request) {
     // Parse request body
     const body = await request.json();
     console.log("📥 Received request:", { ...body, password: "***" }); // Debug log
-
+  
     const { username, email, password, type } = body;
 
     // Validate type

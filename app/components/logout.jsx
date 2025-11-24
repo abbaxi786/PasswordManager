@@ -1,9 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function LogoutButton() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check login status on component load
+  useEffect(() => {
+    function logged(){
+      const user = localStorage.getItem("user");
+      setIsLoggedIn(!!user); // true if user exists, false otherwise
+    }
+
+    logged();    
+    }, []);
 
   const handleLogout = async () => {
     try {
@@ -15,8 +27,11 @@ export default function LogoutButton() {
       const data = await res.json();
 
       if (data.success) {
-        // Redirect after logout
-        router.push("/signin"); // change to your login page route
+        // Remove stored user
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+
+        router.push("/pages/signInUp");
       }
     } catch (error) {
       console.error("Logout failed:", error);
@@ -26,7 +41,8 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="btn btn-error text-white"
+      className="btn btn-error text-left text-white "
+      disabled={!isLoggedIn} // disable when no user
     >
       Logout
     </button>

@@ -37,7 +37,7 @@ function SignIn({func}) {
         return;
       }
 
-      console.log("📤 Sending registration request...");
+      // console.log("📤 Sending registration request...");
 
       // Remove confirmPassword before sending
       const { confirmPassword, ...dataToSend } = form;
