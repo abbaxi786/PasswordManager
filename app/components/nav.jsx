@@ -4,7 +4,6 @@ import Link from "next/link";
 import { GoKey } from "react-icons/go";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { useRouter } from "next/navigation";
-import LogoutButton from "./logout";
 
 function Nav() {
   const [theme, setTheme] = useState("light");
@@ -62,10 +61,12 @@ function Nav() {
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow absolute right-0 mt-2">
             <li>
-              <Link className="btn btn-success text-white my-1" href="/pages/signInUp">Log / Sign In</Link>
+              <Link href="/pages/signInUp">Log / Sign In</Link>
             </li>
             <li>
-              <LogoutButton/>
+              <button className="w-full text-left" onClick={handleLogout}>
+                Logout
+              </button>
             </li>
           </ul>
         </details>
