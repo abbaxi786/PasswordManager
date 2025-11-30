@@ -6,7 +6,6 @@ function LogIn() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState(false);
   const [color, setColor] = useState('p-6 badge badge-error');
-
   function ErrorShow(show) {
     setMessage(true);
     setError(show);
@@ -35,12 +34,11 @@ function LogIn() {
         }
       );
 
-      console.log("Response:", response?.data);
+      // console.log("Response:", response?.data);
 
       if (response?.data?.success) {
         setColor("p-6 badge badge-success");
         ErrorShow(response?.data?.message);
-
         // optional: store user info (NOT TOKEN)
         localStorage.setItem("user", JSON.stringify(response.data.user));
 
