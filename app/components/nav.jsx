@@ -15,22 +15,6 @@ function Nav() {
     document.querySelector("html").setAttribute("data-theme", theme);
   }, [theme]);
 
-  // Logout handler
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/user/logout", {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (data.success) {
-        router.push("/pages/signInUp"); // redirect to login page
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
   return (
     <nav className="flex items-center justify-between p-4 bg-base-200 shadow">
       {/* Left: Home Icon + Title */}
@@ -61,6 +45,9 @@ function Nav() {
             <TfiMenuAlt className="w-5 h-5 sm:w-4 sm:h-4" />
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow absolute right-0 mt-2">
+            <li>
+              <Link className="btn btn-secondary text-white my-1" href="/pages/profile">Profile</Link>
+            </li>
             <li>
               <Link className="btn btn-success text-white my-1" href="/pages/signInUp">Log / Sign In</Link>
             </li>

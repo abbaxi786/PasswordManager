@@ -119,6 +119,7 @@ export async function POST(request) {
           id: existingUser._id,
           email: existingUser.email,
           username: existingUser.username,
+          createdAt: existingUser.createdAt
         },
         JWT_SECRET,
         { expiresIn: "7d" }
@@ -133,7 +134,8 @@ export async function POST(request) {
         user: { 
           id: existingUser._id, 
           username: existingUser.username, 
-          email: existingUser.email 
+          email: existingUser.email ,
+          createdAt: existingUser.createdAt
         },
       });
 
