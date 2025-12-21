@@ -49,7 +49,7 @@ function Nav() {
               <Link className="btn btn-secondary text-white my-1" href="/pages/profile">Profile</Link>
             </li>
             <li>
-              <Link className="btn btn-success text-left text-white" href="/pages/signInUp">Log / Sign In</Link>
+              <Link className="btn btn-success text-left text-white my-1" href="/pages/signInUp">Log / Sign In</Link>
             </li>
             <li>
               <LogoutButton/>
