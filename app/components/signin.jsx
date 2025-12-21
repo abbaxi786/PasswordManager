@@ -46,8 +46,9 @@ function SignIn({func}) {
       const response = await axios.post('/api/user', dataToSend); // ✅ Fixed: relative URL
 
       console.log("SignIn Response: ", response.data);
-
+      
       if (response.data.success) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         setColor('p-6 badge badge-success');
         ErrorShow(response.data.message, true);
       } else {

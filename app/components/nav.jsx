@@ -44,7 +44,10 @@ function Nav() {
           <summary className="btn btn-sm m-1 cursor-pointer flex items-center justify-center">
             <TfiMenuAlt className="w-5 h-5 sm:w-4 sm:h-4" />
           </summary>
-          <ul className="menu gap-1 dropdown-content bg-base-100 rounded-box w-52 p-2 shadow absolute right-0 mt-2">
+          <ul className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow absolute right-0 mt-2">
+            <li>
+              <Link className="btn btn-secondary text-white my-1" href="/pages/profile">Profile</Link>
+            </li>
             <li>
               <Link className="btn btn-success text-left text-white" href="/pages/signInUp">Log / Sign In</Link>
             </li>

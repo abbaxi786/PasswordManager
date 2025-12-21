@@ -3,7 +3,7 @@ import { connectDB } from "@/libs/mongodb";
 import Password from "@/models/password";
 import jwt from "jsonwebtoken";
 
-// GET: fetch all passwords
+// GET: fetch all passwords (with decryption)
 export async function GET(req) {
   try {
     await connectDB();
@@ -16,14 +16,20 @@ export async function GET(req) {
 
     const data = await Password.find({ user: decoded.id });
 
-    return NextResponse.json({ message: "Success", userId: decoded.id, data });
+    // Decrypt password of each document
+    const formatted = data.map((item) => ({
+      ...item._doc,
+      password: item.decryptPassword(),
+    }));
+
+    return NextResponse.json({ message: "Success", userId: decoded.id, data: formatted });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-// POST: store new password
+// POST: store new password (auto-encrypted by model)
 export async function POST(req) {
   try {
     await connectDB();
@@ -37,6 +43,7 @@ export async function POST(req) {
       );
     }
 
+    // Encryption happens automatically in the model's pre-save hook
     const newPassword = new Password({ name, websiteURL, icon, email, password, user });
     await newPassword.save();
 

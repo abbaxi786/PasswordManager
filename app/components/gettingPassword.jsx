@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function StorePassword({onAction}) {
+function StorePassword({ onAction }) {
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [account, setAccount] = useState("");
@@ -11,53 +11,50 @@ function StorePassword({onAction}) {
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
 
-  // Get user from localStorage on client side only
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
+  function getFaviconURL(url) {
+    try {
+      const domain = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    } catch {
+      return "/default-favicon.png";
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) {
-      setMessage("User not logged in.");
-      return;
-    }
+    if (!user) return setMessage("User not logged in.");
 
     setLoading(true);
     setMessage("");
 
-    function getFaviconURL(url) {
-  try {
-    const urlObj = new URL(url);
-    const domain = urlObj.hostname;
-    // Google's service is reliable and returns high-quality icons
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-  } catch (error) {
-    console.error('Invalid URL:', error);
-    return '/default-favicon.png'; // Make sure to add a default icon in your public folder
-  }
-}
-
     try {
-      const tabIcon = getFaviconURL(url);
       const payload = {
-        name: name,
+        name,
         websiteURL: url,
-        icon: tabIcon,
-        password: password,
+        icon: getFaviconURL(url),
         email: account,
-        user: user.id, // user id from localStorage
+        password,
+        user: user.id,
       };
 
-      const res = await axios.post("/api/data", payload);
-      console.log(JSON.stringify(res.data));
+      const res = await axios.post("/api/data", payload, {
+        withCredentials: true,
+      });
+
       setMessage("Password stored successfully!");
       setName("");
       setUrl("");
       setAccount("");
       setPassword("");
-      onAction(false);
+
+      // Update parent state to trigger GET refresh
+      onAction((prev) => !prev);
+
       document.getElementById("my_modal_3")?.close();
     } catch (err) {
       console.error(err);
@@ -89,14 +86,16 @@ function StorePassword({onAction}) {
             className="input input-bordered w-full mb-2"
             required
           />
+
           <input
             type="url"
-            placeholder="URL"
+            placeholder="URL (https://example.com)"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             className="input input-bordered w-full mb-2"
             required
           />
+
           <input
             type="email"
             placeholder="Account Email"
@@ -105,6 +104,7 @@ function StorePassword({onAction}) {
             className="input input-bordered w-full mb-2"
             required
           />
+
           <input
             type="text"
             placeholder="Password"
