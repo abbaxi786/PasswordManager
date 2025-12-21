@@ -6,25 +6,25 @@ function Profile() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    return ()=>{
+    function Windows(){
 
-        // Safely access localStorage only on client side
-        if (typeof window !== 'undefined') {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            } else {
-                // Mock data for demo if no user in localStorage
-                setUser({
-                    id: "692303eb13803f493ab61fa7",
-                    username: "Nabeel Ahmed",
-                    email: "faizan228100@gmail.com",
-                    createdAt: "2025-11-23T12:54:03.862Z"
-                });
-            }
+      if (typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          setUser({
+            id: "692303eb13803f493ab61fa7",
+            username: "Nabeel Ahmed",
+            email: "faizan228100@gmail.com",
+            createdAt: "2025-11-23T12:54:03.862Z"
+          });
         }
     }
-  }, []);
+  }
+    Windows();
+}, [setUser]);
+
 
   // Format date function
   const formatDate = (dateString) => {
