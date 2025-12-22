@@ -20,8 +20,8 @@ function Home() {
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
-                // const res = await axios.get('http://localhost:3000/api/data', {
-        const res = await axios.get('https://password-manager-m2sn.vercel.app/api/data', {
+                const res = await axios.get('/api/data', {
+        // const res = await axios.get('https://password-manager-m2sn.vercel.app/api/data', {
           withCredentials: true
         });
         if (res.data && res.data.data) setData(res.data.data);

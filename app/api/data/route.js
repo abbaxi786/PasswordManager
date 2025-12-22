@@ -46,6 +46,7 @@ export async function POST(req) {
     // Encryption happens automatically in the model's pre-save hook
     const newPassword = new Password({ name, websiteURL, icon, email, password, user });
     await newPassword.save();
+    console.log("Saved new password:", newPassword);
 
     return NextResponse.json({ message: "Password saved successfully" });
   } catch (err) {
