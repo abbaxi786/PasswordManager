@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { GoKey} from 'react-icons/go';
+import { GoKey } from 'react-icons/go';
 import { IoClipboardOutline } from "react-icons/io5";
 import Image from 'next/image';
 import StorePassword from '@/app/components/gettingPassword';
@@ -8,10 +8,12 @@ import axios from 'axios';
 
 function Home() {
   const [data, setData] = useState([]);
-  const [bool,setBool]= useState(false);
+  const [bool, setBool] = useState(false);
   const [selectedPassword, setSelectedPassword] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  function SetInfo(value){
+  function SetInfo(value) {
     value = !value;
     setBool(value);
   }
@@ -19,15 +21,21 @@ function Home() {
   // Fetch passwords from API
   useEffect(() => {
     const fetchPasswords = async () => {
+      setLoading(true);
+      setError(null);
       try {
-                const res = await axios.get('/api/data', {
-        // const res = await axios.get('https://password-manager-m2sn.vercel.app/api/data', {
+        const res = await axios.get('/api/data', {
           withCredentials: true
         });
-        if (res.data && res.data.data) setData(res.data.data);
+        if (res.data && res.data.data) {
+          setData(res.data.data);
+        }
         console.log(res.data);
       } catch (err) {
         console.log('Error fetching passwords:', err.response?.data || err.message);
+        setError('Failed to load passwords. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchPasswords();
@@ -52,23 +60,67 @@ function Home() {
       {/* Header */}
       <StorePassword onAction={SetInfo} />
 
-      {/* Hero Section */}
-      <div className="flex flex-col items-center px-4 py-6 sm:py-8 md:py-10 bg-linear-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700">
-        <div className="bg-white/10 backdrop-blur-sm p-3 sm:p-4 rounded-full mb-3 sm:mb-4">
-          <GoKey className="text-white w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+      {/* Hero Section with Key Logo Banner */}
+      <div className="flex flex-col items-center px-4 py-6 sm:py-8 md:py-10 bg-linear-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <GoKey className="absolute top-4 left-4 w-12 h-12 text-white transform rotate-12" />
+          <GoKey className="absolute top-8 right-8 w-16 h-16 text-white transform -rotate-45" />
+          <GoKey className="absolute bottom-6 left-1/4 w-10 h-10 text-white transform rotate-90" />
+          <GoKey className="absolute bottom-4 right-1/3 w-14 h-14 text-white transform -rotate-12" />
         </div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-white text-center">
+
+        {/* Main Key Logo */}
+        <div className="bg-white/10 backdrop-blur-sm p-3 sm:p-4 rounded-full mb-3 sm:mb-4 relative z-10 shadow-lg">
+          <GoKey className="text-white w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 animate-pulse" />
+        </div>
+        
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-white text-center relative z-10">
           Password Manager
         </h1>
-        <p className="text-xs sm:text-sm md:text-base text-white/80 mt-1 sm:mt-2 text-center px-4">
+        <p className="text-xs sm:text-sm md:text-base text-white/80 mt-1 sm:mt-2 text-center px-4 relative z-10">
           Securely store and manage your passwords
         </p>
       </div>
 
       {/* Main Content Container */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-        {/* Password Cards Grid */}
-        {data.length > 0 ? (
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-16 sm:py-20 md:py-24">
+            <div className="relative">
+              {/* Animated spinner */}
+              <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              {/* Key icon in center */}
+              <GoKey className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+            </div>
+            <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg text-base-content/70 font-medium">
+              Loading your passwords...
+            </p>
+            <div className="flex gap-1 mt-3">
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+            </div>
+          </div>
+        ) : error ? (
+          /* Error State */
+          <div className="text-center py-12 sm:py-16 md:py-20">
+            <div className="bg-error/10 p-4 sm:p-6 rounded-lg max-w-md mx-auto">
+              <GoKey className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-error mb-4" />
+              <p className="text-sm sm:text-base md:text-lg text-error font-semibold mb-2">
+                {error}
+              </p>
+              <button
+                className="btn btn-error btn-sm sm:btn-md mt-4 text-white"
+                onClick={() => setBool(!bool)}
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : data.length > 0 ? (
+          /* Password Cards Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
             {data.map((item, key) => (
               <button
@@ -98,6 +150,7 @@ function Home() {
             ))}
           </div>
         ) : (
+          /* Empty State */
           <div className="text-center py-12 sm:py-16 md:py-20">
             <GoKey className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-base-content/30 mb-4" />
             <p className="text-sm sm:text-base md:text-lg text-base-content/60">
@@ -107,14 +160,16 @@ function Home() {
         )}
 
         {/* Add Password Button */}
-        <div className="flex justify-center mt-6 sm:mt-8">
-          <button
-            className="btn btn-accent btn-sm sm:btn-md text-white shadow-lg hover:shadow-xl transition-all"
-            onClick={() => document.getElementById('my_modal_3')?.showModal()}
-          >
-            <span className="text-sm sm:text-base">+ Add Password</span>
-          </button>
-        </div>
+        {!loading && (
+          <div className="flex justify-center mt-6 sm:mt-8">
+            <button
+              className="btn btn-accent btn-sm sm:btn-md text-white shadow-lg hover:shadow-xl transition-all"
+              onClick={() => document.getElementById('my_modal_3')?.showModal()}
+            >
+              <span className="text-sm sm:text-base">+ Add Password</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Modal to show password */}
@@ -125,7 +180,7 @@ function Home() {
           open
         >
           <div className="modal-box w-11/12 max-w-md sm:max-w-lg">
-            <h3 className="font-bold text-base sm:text-lg md:text-xl mb-3 sm:mb-4 wrap-break-word">
+            <h3 className="font-bold text-base sm:text-lg md:text-xl mb-3 sm:mb-4 wrap-break-words">
               Password for {selectedPassword.websiteURL}
             </h3>
             
