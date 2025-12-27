@@ -15,9 +15,9 @@ function Profile() {
         } else {
           setUser({
             id: "692303eb13803f493ab61fa7",
-            username: "Nabeel Ahmed",
-            email: "faizan228100@gmail.com",
-            createdAt: "2025-11-23T12:54:03.862Z"
+            username: "Example",
+            email: "example@gmail.com",
+            createdAt: "0000-00-00T12:00:00.0000"
           });
         }
     }
